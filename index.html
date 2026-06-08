@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اسم زیبا ساز حرفه‌ای | شکلک در دو طرف + دکمه برگشت</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(145deg, #1e2b3c, #0f1a24);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem;
+            direction: rtl;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #fffef8;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+        }
+        .header h1 {
+            font-size: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+        }
+        .input-area {
+            padding: 1.5rem;
+            background: #fff;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        #nameInput {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ffe0a3;
+            border-radius: 2rem;
+            font-size: 1.1rem;
+            font-family: inherit;
+            text-align: right;
+        }
+        .font-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 1rem 0;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            background: #fdf8ed;
+            border-radius: 1rem;
+        }
+        .font-btn {
+            background: #f0e4c6;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .font-btn:hover {
+            background: #feca57;
+            transform: scale(1.02);
+        }
+        .active-font {
+            background: #ff8c42;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .panels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 0 1.5rem;
+        }
+        .panel {
+            flex: 1;
+            background: #fef9e6;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            min-width: 200px;
+        }
+        .panel h3 {
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 2px solid #ffd966;
+            padding-bottom: 5px;
+        }
+        .emoji-grid, .kaomoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+            gap: 0.5rem;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .emoji-item, .kaomoji-item {
+            background: white;
+            border: 1px solid #ffdead;
+            border-radius: 0.8rem;
+            text-align: center;
+            padding: 0.4rem;
+            cursor: pointer;
+            transition: 0.1s;
+            font-size: 1.3rem;
+        }
+        .kaomoji-item {
+            font-family: monospace;
+            font-size: 0.9rem;
+            direction: ltr;
+        }
+        .emoji-item:hover, .kaomoji-item:hover {
+            background: #ffd966;
+            transform: scale(1.05);
+        }
+        .output-area {
+            background: #f2efe0;
+            margin: 0 1.5rem 1.5rem 1.5rem;
+            padding: 1.2rem;
+            border-radius: 1.5rem;
+        }
+        .result-box {
+            background: white;
+            padding: 1rem;
+            border-radius: 1rem;
+            min-height: 80px;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            word-break: break-word;
+            direction: ltr;
+            text-align: left;
+            border: 2px dashed #ffb347;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .btn-copy {
+            background: #4caf50;
+            color: white;
+        }
+        .btn-undo {
+            background: #ff9800;
+            color: white;
+        }
+        .btn-reset {
+            background: #ff6b6b;
+            color: white;
+        }
+        footer {
+            background: #e2d5b6;
+            text-align: center;
+            padding: 0.8rem;
+            font-size: 0.7rem;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e2b;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            z-index: 1000;
+            opacity: 0;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>✨ اسم زیبا ساز ✨</h1>
+        <p>اسمتو بنویس → فونت بزن → شکلک یا ایموجی رو انتخاب کن → خودش به دو سر اضافه میشه + دکمه برگشت</p>
+    </div>
+
+    <div class="input-area">
+        <label>📝 اسم یا متن خود را بنویسید:</label>
+        <input type="text" id="nameInput" placeholder="مثال: سارا / علی / رضا" value="سارا">
+    </div>
+
+    <div style="padding: 0 1.5rem;">
+        <label>🎨 فونت دلخواه (روی هرکلیک، اسم با اون فونت نمایش داده میشه):</label>
+        <div class="font-buttons" id="fontButtons"></div>
+    </div>
+
+    <div class="panels">
+        <div class="panel">
+            <h3>😍 ایموجی‌ها (با کلیک به دو سر اضافه می‌شوند)</h3>
+            <div class="emoji-grid" id="emojiGrid"></div>
+        </div>
+        <div class="panel">
+            <h3>⌨️ شکلک کیبوردی (کااوموجی) - دو سر</h3>
+            <div class="kaomoji-grid" id="kaomojiGrid"></div>
+        </div>
+    </div>
+
+    <div class="output-area">
+        <label>🌟 نتیجه نهایی (شکلک‌ها در دو طرف):</label>
+        <div class="result-box" id="resultBox">...</div>
+        <div class="action-buttons">
+            <button class="btn btn-copy" id="copyBtn">📋 کپی متن نهایی</button>
+            <button class="btn btn-undo" id="undoBtn">↩️ برگردوندن آخرین کار (Undo)</button>
+            <button class="btn btn-reset" id="resetShapesBtn">🗑️ حذف همه شکلک‌های دو طرف</button>
+        </div>
+        <div style="font-size: 0.7rem; margin-top: 0.5rem; text-align: center;">💡 هر بار روی ایموجی یا شکلک کلیک کنی، به دو طرف متن اضافه میشه. دکمه Undo آخرین اضافه یا آخرین تغییر فونت رو برمیگردونه.</div>
+    </div>
+
+    <footer>
+        ⚡ فونت‌ها یونیکد هستند و در همه جا کار می‌کنند | شکلک‌ها هم در راست و هم در چپ اسم قرار می‌گیرند
+    </footer>
+</div>
+<div id="toastMsg" class="toast">✅ کپی شد!</div>
+
+<script>
+    // ============================ دیکشنری فونت‌های یونیکد ============================
+    const fonts = {
+        "🔤 عادی": (text) => text,
+        "🅰️ پررنگ (Bold)": (text) => {
+            const map = { 'a':'𝗮','b':'𝗯','c':'𝗰','d':'𝗱','e':'𝗲','f':'𝗳','g':'𝗴','h':'𝗵','i':'𝗶','j':'𝗷','k':'𝗸','l':'𝗹','m':'𝗺','n':'𝗻','o':'𝗼','p':'𝗽','q':'𝗾','r':'𝗿','s':'𝘀','t':'𝘁','u':'𝘂','v':'𝘃','w':'𝘄','x':'𝘅','y':'𝘆','z':'𝘇', 'A':'𝗔','B':'𝗕','C':'𝗖','D':'𝗗','E':'𝗘','F':'𝗙','G':'𝗚','H':'𝗛','I':'𝗜','J':'𝗝','K':'𝗞','L':'𝗟','M':'𝗠','N':'𝗡','O':'𝗢','P':'𝗣','Q':'𝗤','R':'𝗥','S':'𝗦','T':'𝗧','U':'𝗨','V':'𝗩','W':'𝗪','X':'𝗫','Y':'𝗬','Z':'𝗭', '0':'𝟬','1':'𝟭','2':'𝟮','3':'𝟯','4':'𝟰','5':'𝟱','6':'𝟲','7':'𝟳','8':'𝟴','9':'𝟵' };
+            return text.split('').map(ch => map[ch] || ch).join('');
+        },
+        "𝓲𝓽𝓪𝓵𝓲𝓬 کج": (text) => {
+            const map = { 'a':'𝓪','b':'𝓫','c':'𝓬','d':'𝓭','e':'𝓮','f':'𝓯','g':'𝓰','h':'𝓱','i':'𝓲','j':'𝓳','k':'𝓴','l':'𝓵','m':'𝓶','n':'𝓷','o':'𝓸','p':'𝓹','q':'𝓺','r':'𝓻','s':'𝓼','t':'𝓽','u':'𝓾','v':'𝓿','w':'𝔀','x':'𝔁','y':'𝔂','z':'𝔃', 'A':'𝓐','B':'𝓑','C':'𝓒','D':'𝓓','E':'𝓔','F':'𝓕','G':'𝓖','H':'𝓗','I':'𝓘','J':'𝓙','K':'𝓚','L':'𝓛','M':'𝓜','N':'𝓝','O':'𝓞','P':'𝓟','Q':'𝓠','R':'𝓡','S':'𝓢','T':'𝓣','U':'𝓤','V':'𝓥','W':'𝓦','X':'𝓧','Y':'𝓨','Z':'𝓩' };
+            return text.split('').map(ch => map[ch] || ch).join('');
+        },
+        "🄲🄸🅁🄲🄻🄴 دایره‌ای": (text) => {
+            const map = { 'a':'🄰','b':'🄱','c':'🄲','d':'🄳','e':'🄴','f':'🄵','g':'🄶','h':'🄷','i':'🄸','j':'🄹','k':'🄺','l':'🄻','m':'🄼','n':'🄽','o':'🄾','p':'🄿','q':'🅀','r':'🅁','s':'🅂','t':'🅃','u':'🅄','v':'🅅','w':'🅆','x':'🅇','y':'🅈','z':'🅉', 'A':'🄐','B':'🄑','C':'🄒','D':'🄓','E':'🄔','F':'🄕','G':'🄖','H':'🄗','I':'🄘','J':'🄙','K':'🄚','L':'🄛','M':'🄜','N':'🄝','O':'🄞','P':'🄟','Q':'🄠','R':'🄡','S':'🄢','T':'🄣','U':'🄤','V':'🄥','W':'🄦','X':'🄧','Y':'🄨','Z':'🄩', '0':'⓪','1':'①','2':'②','3':'③','4':'④','5':'⑤','6':'⑥','7':'⑦','8':'⑧','9':'⑨' };
+            return text.split('').map(ch => map[ch] || ch).join('');
+        },
+        "𝔻𝕠𝕦𝕓𝕝𝕖 (دوبل)": (text) => {
+            const map = { 'a':'𝕒','b':'𝕓','c':'𝕔','d':'𝕕','e':'𝕖','f':'𝕗','g':'𝕘','h':'𝕙','i':'𝕚','j':'𝕛','k':'𝕜','l':'𝕝','m':'𝕞','n':'𝕟','o':'𝕠','p':'𝕡','q':'𝕢','r':'𝕣','s':'𝕤','t':'𝕥','u':'𝕦','v':'𝕧','w':'𝕨','x':'𝕩','y':'𝕪','z':'𝕫', 'A':'𝔸','B':'𝔹','C':'ℂ','D':'𝔻','E':'𝔼','F':'𝔽','G':'𝔾','H':'ℍ','I':'𝕀','J':'𝕁','K':'𝕂','L':'𝕃','M':'𝕄','N':'ℕ','O':'𝕆','P':'ℙ','Q':'ℚ','R':'ℝ','S':'𝕊','T':'𝕋','U':'𝕌','V':'𝕍','W':'𝕎','X':'𝕏','Y':'𝕐','Z':'ℤ', '0':'𝟘','1':'𝟙','2':'𝟚','3':'𝟛','4':'𝟜','5':'𝟝','6':'𝟞','7':'𝟟','8':'𝟠','9':'𝟡' };
+            return text.split('').map(ch => map[ch] || ch).join('');
+        },
+        "Sᗰᗩᒪᒪ ᑕᗩᑭᔕ (کوچک بزرگ)": (text) => {
+            const map = { 'a':'ᴀ','b':'ʙ','c':'ᴄ','d':'ᴅ','e':'ᴇ','f':'ꜰ','g':'ɢ','h':'ʜ','i':'ɪ','j':'ᴊ','k':'ᴋ','l':'ʟ','m':'ᴍ','n':'ɴ','o':'ᴏ','p':'ᴘ','q':'ǫ','r':'ʀ','s':'ꜱ','t':'ᴛ','u':'ᴜ','v':'ᴠ','w':'ᴡ','x':'x','y':'ʏ','z':'ᴢ' };
+            return text.split('').map(ch => map[ch] || ch).join('');
+        },
+        "S̶t̶r̶o̶k̶e̶ (خط خورده)": (text) => text.split('').map(ch => ch + '̶').join(''),
+        "U͟n͟d͟e͟r͟l͟i͟n͟e (زیرخط)": (text) => text.split('').map(ch => ch + '̲').join(''),
+        "𝙼𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎 (تک فاصله)": (text) => {
+            const map = { 'a':'𝚊','b':'𝚋','c':'𝚌','d':'𝚍','e':'𝚎','f':'𝚏','g':'𝚐','h':'𝚑','i':'𝚒','j':'𝚓','k':'𝚔','l':'𝚕','m':'𝚖','n':'𝚗','o':'𝚘','p':'𝚙','q':'𝚚','r':'𝚛','s':'𝚜','t':'𝚝','u':'𝚞','v':'𝚟','w':'𝚠','x':'𝚡','y':'𝚢','z':'𝚣', 'A':'𝙰','B':'𝙱','C':'𝙲','D':'𝙳','E':'𝙴','F':'𝙵','G':'𝙶','H':'𝙷','I':'𝙸','J':'𝙹','K':'𝙺','L':'𝙻','M':'𝙼','N':'𝙽','O':'𝙾','P':'𝙿','Q':'𝚀','R':'𝚁','S':'𝚂','T':'𝚃','U':'𝚄','V':'𝚅','W':'𝚆','X':'𝚇','Y':'𝚈','Z':'𝚉', '0':'𝟶','1':'𝟷','2':'𝟸','3':'𝟹','4':'𝟺','5':'𝟻','6':'𝟼','7':'𝟽','8':'𝟾','9':'𝟿' };
+            return text.split('').map(ch => map[ch] || ch).join('');
+        },
+        "🙃 وارونه (Upside Down)": (text) => {
+            const map = { 'a':'ɐ','b':'q','c':'ɔ','d':'p','e':'ǝ','f':'ɟ','g':'ɓ','h':'ɥ','i':'ı','j':'ɾ','k':'ʞ','l':'l','m':'ɯ','n':'u','o':'o','p':'d','q':'b','r':'ɹ','s':'s','t':'ʇ','u':'n','v':'ʌ','w':'ʍ','x':'x','y':'ʎ','z':'z', 'A':'∀','B':'𐐒','C':'Ɔ','D':'◖','E':'Ǝ','F':'Ⅎ','G':'⅁','H':'H','I':'I','J':'ſ','K':'Ʞ','L':'⅂','M':'W','N':'N','O':'O','P':'Ԁ','Q':'Q','R':'ᴚ','S':'S','T':'┴','U':'∩','V':'Λ','W':'M','X':'X','Y':'⅄','Z':'Z', '0':'0','1':'Ɩ','2':'ᄅ','3':'Ɛ','4':'ㄣ','5':'ϛ','6':'9','7':'ㄥ','8':'8','9':'6', '!':'¡','?':'¿','.':'˙',',':'\'',';':'؛',':':':' };
+            return text.split('').reverse().map(ch => map[ch] || ch).join('');
+        },
+        "𝕾𝖈𝖗𝖎𝖕𝖙 (کالیگرافی)": (text) => {
+            const map = { 'a':'𝖆','b':'𝖇','c':'𝖈','d':'𝖉','e':'𝖊','f':'𝖋','g':'𝖌','h':'𝖍','i':'𝖎','j':'𝖏','k':'𝖐','l':'𝖑','m':'𝖒','n':'𝖓','o':'𝖔','p':'𝖕','q':'𝖖','r':'𝖗','s':'𝖘','t':'𝖙','u':'𝖚','v':'𝖛','w':'𝖜','x':'𝖝','y':'𝖞','z':'𝖟', 'A':'𝕬','B':'𝕭','C':'𝕮','D':'𝕯','E':'𝕰','F':'𝕱','G':'𝕲','H':'𝕳','I':'𝕴','J':'𝕵','K':'𝕶','L':'𝕷','M':'𝕸','N':'𝕹','O':'𝕺','P':'𝕻','Q':'𝕼','R':'𝕽','S':'𝕾','T':'𝕿','U':'𝖀','V':'𝖁','W':'𝖂','X':'𝖃','Y':'𝖄','Z':'𝖅' };
+            return text.split('').map(ch => map[ch] || ch).join('');
+        },
+        "🅟🅐🅡🅔🅝🅣🅗🅔🅢🅘🅢 (پرانتزی)": (text) => {
+            const map = { 'a':'⒜','b':'⒝','c':'⒞','d':'⒟','e':'⒠','f':'⒡','g':'⒢','h':'⒣','i':'⒤','j':'⒥','k':'⒦','l':'⒧','m':'⒨','n':'⒩','o':'⒪','p':'⒫','q':'⒬','r':'⒭','s':'⒮','t':'⒯','u':'⒰','v':'⒱','w':'⒲','x':'⒳','y':'⒴','z':'⒵', 'A':'Ⓐ','B':'Ⓑ','C':'Ⓒ','D':'Ⓓ','E':'Ⓔ','F':'Ⓕ','G':'Ⓖ','H':'Ⓗ','I':'Ⓘ','J':'Ⓙ','K':'Ⓚ','L':'Ⓛ','M':'Ⓜ','N':'Ⓝ','O':'Ⓞ','P':'Ⓟ','Q':'Ⓠ','R':'Ⓡ','S':'Ⓢ','T':'Ⓣ','U':'Ⓤ','V':'Ⓥ','W':'Ⓦ','X':'Ⓧ','Y':'Ⓨ','Z':'Ⓩ' };
+            return text.split('').map(ch => map[ch] || ch).join('');
+        },
+        "ᴛɪɴʏ (ریز)": (text) => {
+            const map = { 'a':'ᴀ','b':'ʙ','c':'ᴄ','d':'ᴅ','e':'ᴇ','f':'ꜰ','g':'ɢ','h':'ʜ','i':'ɪ','j':'ᴊ','k':'ᴋ','l':'ʟ','m':'ᴍ','n':'ɴ','o':'ᴏ','p':'ᴘ','q':'ǫ','r':'ʀ','s':'ꜱ','t':'ᴛ','u':'ᴜ','v':'ᴠ','w':'ᴡ','x':'x','y':'ʏ','z':'ᴢ' };
+            return text.toLowerCase().split('').map(ch => map[ch] || ch).join('');
+        }
+    };
+
+    // ============================ ایموجی‌های استاندارد ============================
+    const emojis = [
+        "😀","😍","🔥","✨","⭐","🌟","💎","❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎",
+        "👍","👎","👏","🙌","🤝","💪","🎉","🎊","🎈","🎁","🏆","🥇","🥈","🥉",
+        "🌙","☀️","🌈","⚡","❄️","💧","🍎","🍕","🚀","💻","📱","🎵","🎶","💯","❗","❓",
+        "😎","🤩","🥳","😇","🥰","😘","😊","🙃","🤔","😭","😂","🤣","😅","😆",
+        "🐱","🐶","🦊","🐼","🐸"
+    ];
+
+    // ============================ شکلک‌های کیبوردی (کااوموجی) ============================
+    const kaomojiList = [
+        "(•‿•)", "(◕‿◕)", "٩(◕‿◕｡)۶", "(✿◠‿◠)", "ʕ•ᴥ•ʔ", "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧",
+        "(╥﹏╥)", "(｡•́︿•̀｡)", "(ಥ﹏ಥ)", "〒﹏〒", "(◞‸◟)",
+        "(♥‿♥)", "(づ￣ ³￣)づ", "♡(˃͈ દ ˂͈ ༶ )", "٩(♡ε♡)۶",
+        "¯\\_(ツ)_/¯", "(╯°□°）╯︵ ┻━┻", "┬─┬ノ( º _ ºノ)", "ᕦ(ò_óˇ)ᕤ",
+        "=^._.^= ∫", "ˁ˚ᴥ˚ˀ", "U•ﻌ•U", "(•ө•)♡",
+        "(⊙_⊙)", "(◔_◔)", "( ͡° ͜ʖ ͡°)", "♪┏(・o･)┛♪", "ᕙ(⇀‸↼‶)ᕗ"
+    ];
+
+    // ----- وضعیت برنامه (با پشتیبانی از اضافه شدن به دو طرف و Undo) -----
+    let currentFontName = "🔤 عادی";          // اسم فونت فعلی
+    let leftShapes = [];    // شکلک‌های سمت چپ (به ترتیب از نزدیک اسم به بیرون)
+    let rightShapes = [];   // شکلک‌های سمت راست (به ترتیب از نزدیک اسم به بیرون)
+    
+    // تاریخچه برای Undo (ماکزیمم ۵۰ مرحله)
+    let historyStack = [];   // هر عضو: { leftShapes, rightShapes, fontName }
+    
+    function pushToHistory() {
+        // clone عمیق از آرایه‌ها
+        const snapshot = {
+            leftShapes: [...leftShapes],
+            rightShapes: [...rightShapes],
+            fontName: currentFontName
+        };
+        historyStack.push(snapshot);
+        // محدود کردن طول تاریخچه به ۵۰
+        if (historyStack.length > 50) historyStack.shift();
+    }
+    
+    // بازگرداندن آخرین وضعیت (Undo)
+    function undoLastAction() {
+        if (historyStack.length === 0) {
+            showToast("چیزی برای برگردوندن نیست!");
+            return;
+        }
+        const last = historyStack.pop();
+        leftShapes = last.leftShapes;
+        rightShapes = last.rightShapes;
+        currentFontName = last.fontName;
+        // بروزرسانی UI (دکمه فونت فعال)
+        updateFontButtonActive();
+        updateDisplay();
+        showToast("↩️ آخرین تغییر برگردانده شد");
+    }
+    
+    // اضافه کردن شکلک به دو طرف
+    function addShapeToBothSides(shape) {
+        pushToHistory();   // ذخیره وضعیت قبل
+        // اضافه کردن shape به ابتدای leftShapes (بیرونی‌ترین سمت چپ)
+        leftShapes.unshift(shape);
+        // اضافه کردن shape به انتهای rightShapes (بیرونی‌ترین سمت راست)
+        rightShapes.push(shape);
+        updateDisplay();
+        showToast(`🔁 "${shape}" به دو طرف اضافه شد`);
+    }
+    
+    // حذف کامل همه شکلک‌های دو طرف
+    function resetAllShapes() {
+        if (leftShapes.length === 0 && rightShapes.length === 0) {
+            showToast("هیچ شکلکی برای حذف نیست!");
+            return;
+        }
+        pushToHistory();
+        leftShapes = [];
+        rightShapes = [];
+        updateDisplay();
+        showToast("🧹 همه شکلک‌های دو طرف حذف شدند");
+    }
+    
+    // تغییر فونت
+    function setFont(fontName, converter) {
+        // ذخیره وضعیت قبل فقط اگر فونت واقعاً تغییر کند
+        if (currentFontName === fontName) return;
+        pushToHistory();
+        currentFontName = fontName;
+        currentFontConverter = converter;
+        updateFontButtonActive();
+        updateDisplay();
+        showToast(`فونت "${fontName}" اعمال شد`);
+    }
+    
+    // بروزرسانی کلاس active روی دکمه فونت
+    function updateFontButtonActive() {
+        document.querySelectorAll('.font-btn').forEach(btn => {
+            if (btn.getAttribute('data-fontname') === currentFontName) {
+                btn.classList.add('active-font');
+            } else {
+                btn.classList.remove('active-font');
+            }
+        });
+    }
+    
+    // توابع مورد نیاز
+    let currentFontConverter = fonts["🔤 عادی"];
+    
+    function getStyledName() {
+        const rawName = document.getElementById('nameInput').value.trim();
+        if (rawName === "") return "???";
+        return currentFontConverter(rawName);
+    }
+    
+    function updateDisplay() {
+        const styled = getStyledName();
+        const leftPart = leftShapes.join('');
+        const rightPart = rightShapes.join('');
+        const finalText = leftPart + styled + rightPart;
+        document.getElementById('resultBox').innerText = finalText || "⚠️ لطفاً اسم خود را وارد کنید";
+    }
+    
+    // رویدادها
+    const nameInput = document.getElementById('nameInput');
+    nameInput.addEventListener('input', () => {
+        // تغییر اسم نیاز به ذخیره در تاریخچه دارد (چون کاربر ممکنه بخواد برگردونه)
+        pushToHistory();
+        updateDisplay();
+        showToast("اسم تغییر کرد");
+    });
+    
+    // ساخت دکمه‌های فونت
+    const fontButtonsDiv = document.getElementById('fontButtons');
+    for (const [fontName, converter] of Object.entries(fonts)) {
+        const btn = document.createElement('button');
+        btn.className = 'font-btn';
+        btn.innerText = fontName;
+        btn.setAttribute('data-fontname', fontName);
+        btn.addEventListener('click', () => {
+            setFont(fontName, converter);
+        });
+        fontButtonsDiv.appendChild(btn);
+    }
+    // تنظیم فونت اولیه
+    currentFontConverter = fonts["🔤 عادی"];
+    updateFontButtonActive();
+    
+    // ساخت ایموجی‌ها
+    const emojiGrid = document.getElementById('emojiGrid');
+    emojis.forEach(emo => {
+        const div = document.createElement('div');
+        div.className = 'emoji-item';
+        div.textContent = emo;
+        div.title = `اضافه کردن ${emo} به دو طرف`;
+        div.addEventListener('click', () => addShapeToBothSides(emo));
+        emojiGrid.appendChild(div);
+    });
+    
+    // ساخت کااوموجی‌ها
+    const kaomojiGrid = document.getElementById('kaomojiGrid');
+    kaomojiList.forEach(kao => {
+        const div = document.createElement('div');
+        div.className = 'kaomoji-item';
+        div.textContent = kao;
+        div.title = `اضافه کردن ${kao} به دو طرف`;
+        div.addEventListener('click', () => addShapeToBothSides(kao));
+        kaomojiGrid.appendChild(div);
+    });
+    
+    // دکمه‌ها
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+        const textToCopy = document.getElementById('resultBox').innerText;
+        if (!textToCopy || textToCopy.includes("???") || textToCopy === "⚠️ لطفاً اسم خود را وارد کنید") {
+            showToast("لطفاً ابتدا اسم خود را بنویسید");
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            showToast("✅ متن نهایی کپی شد!");
+        } catch(e) {
+            alert("خطا در کپی کردن");
+        }
+    });
+    
+    document.getElementById('undoBtn').addEventListener('click', undoLastAction);
+    document.getElementById('resetShapesBtn').addEventListener('click', resetAllShapes);
+    
+    function showToast(msg) {
+        const toast = document.getElementById('toastMsg');
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        setTimeout(() => { toast.style.opacity = '0'; }, 1500);
+    }
+    
+    // مقدار اولیه
+    updateDisplay();
+</script>
+</body>
+</html>
